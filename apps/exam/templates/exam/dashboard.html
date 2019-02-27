@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        #quotes_box{
+            border:2px solid black;
+            margin: 4px;
+        }
+    </style>
+    <title>Dashboard Page</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9">
+                <strong>Welcome! {{request.session.f_name}}!</strong>
+                    <a type="button" href="/log_off">Logout</a>
+            </div> 
+            <div class="col-sm-3">     
+                <a href="/addJob">Add a Job</a>
+            </div> 
+        </div>
+        <hr>
+        <div class="row">
+                <div class="col-sm-8">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                            <th scope="col">Job</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in job_list %}
+                            {% if job.claimed_by.id != request.session.user_id %}
+                            <tr>
+                                <td>{{ job.title }}</td>
+                                <td>{{ job.location }}</td>
+                                <td>
+                                    <a href='/user_job/{{job.id}}'>View</a> |
+                                    <a href='/claim/{{job.id}}'>Claim</a> |
+                                    {% if job.created_by.id == request.session.user_id %}
+                                    <a href='/edit_job_page/{{job.id}}'>Edit</a> |
+                                    <a href='/delete/{{job.id}}'>Cancel</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>    
+                </div> 
+                <div class="col-sm-4"> 
+                    <table class="table table-hover table-dark">
+                        <thead>
+                            <tr>
+                                <th scope="col">My Jobs</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for job in job_list %}
+                                {% if job.created_by.id == request.session.user_id %}
+                                <tr>
+                                    <td>{{ job.title }}</td>
+                                    <td><a href="/user_job/{{job.id}}">view</a> | <a href="/delete/{{job.id}}">done</a></td>
+                                </tr> 
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div> 
+            </div>
+    </div>
+</body>
+</html>
